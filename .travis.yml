@@ -10,8 +10,10 @@ before_install:
     - conda config --set always_yes yes --set changeps1 no
     - conda info -a
 install:
+    - pip install deepdish>=0.3.6
     - conda install -q conda-build conda-verify
-    - conda build conda -c defaults -c conda-forge
+    - conda build conda 
+    - conda build conda -c main -c r -c conda-forge
     - conda create --name pymer4_env pymer4 -c local -c main -c r -c conda-forge
     - conda activate pymer4_env  # so tests run in env as installed by conda
     - conda install black pytest-cov
@@ -19,7 +21,7 @@ install:
     - lscpu
     - python -c 'import numpy; numpy.show_config()'
 script:
-    - black --check --verbose --line-length=79 .
+#    - black --check --verbose --line-length=79 .
     - pytest --cov=pymer4
 after_success:
     - pip install codecov && codecov
