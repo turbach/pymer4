@@ -1,0 +1,80 @@
+{% set name = "pymer4" %}
+{% set version = "0.8.0.dev0" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+# left over from skeleton
+# source:
+#   url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+#   sha256: 14d83fbbbfa5a08a3036fa42586102899fd7275b8946c044a6ad3f97f0b160a3
+#
+# build:
+  # number: 0
+  # script: "{{ PYTHON }} -m pip install . -vv"
+
+source:
+    git_url: ../  # to enable GIT_X_Y env vars
+
+build:
+    script: python setup.py install --single-version-externally-managed --record=record.txt
+    string: {{ environ.get("GIT_BUILD_STR", "no_git_build_str") }}_{{ environ.get("PKG_BUILDNUM", "no_pkg_buildnum") }}
+
+
+requirements:
+  host:
+    - deepdish >=0.3.6
+    - joblib >=0.11
+    - matplotlib >=3.0
+    - numpy >=1.16.0
+    - pandas >=0.23.4
+    - patsy >=0.4.1
+    - pip
+    - python >=3.6
+    - rpy2 >=3.1.0
+    - scipy >=1.2.0
+    - seaborn >=0.9.0
+    - six
+    - r-base
+    - r-lme4
+    - r-lmerTest
+    - r-emmeans
+    - r-rpy2
+  run:
+    - deepdish >=0.3.6
+    - joblib >=0.11
+    - matplotlib >=3.0
+    - numpy >=1.16.0
+    - pandas >=0.23.4
+    - patsy >=0.4.1
+    - python >=3.6
+    - rpy2 >=3.1.0
+    - scipy >=1.2.0
+    - seaborn >=0.9.0
+    - six
+    - r-base
+    - r-lme4
+    - r-lmerTest
+    - r-emmeans
+    - r-rpy2
+
+test:
+  imports:
+    - pymer4
+    - pymer4.models
+  requires:
+    - pytest
+
+about:
+  home: "http://eshinjolly.com/pymer4/"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "pymer4: all the convenience of lme4 in python"
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - your-github-id-here
