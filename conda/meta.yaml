@@ -1,57 +1,35 @@
 {% set name = "pymer4" %}
-{% set version = "0.8.0.dev0" %}
+{% set version = "0.7.1" %}
 
 package:
   name: "{{ name|lower }}"
   version: "{{ version }}"
 
-# left over from skeleton
-# source:
-#   url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-#   sha256: 14d83fbbbfa5a08a3036fa42586102899fd7275b8946c044a6ad3f97f0b160a3
-#
-# build:
-  # number: 0
-  # script: "{{ PYTHON }} -m pip install . -vv"
-
 source:
     git_url: ../  # to enable GIT_X_Y env vars
 
 build:
-    script: python setup.py install --single-version-externally-managed --record=record.txt
+    # script: python setup.py install --single-version-externally-managed --record=record.txt
+    script: pip install . -vv --no-deps
     string: {{ environ.get("GIT_BUILD_STR", "no_git_build_str") }}_{{ environ.get("PKG_BUILDNUM", "no_pkg_buildnum") }}
 
-
 requirements:
+
   host:
-    - python #>=3.6
-    - deepdish # >=0.3.6
-    - joblib # >=0.11
-    - matplotlib # >=3.0
-    - numpy # >=1.16.0
-    - pandas #>=1.0 # >=0.23.4
-    - patsy #>=0.4.1
+    - python  # else test section fails during TravisCI conda build
     - pip
-    - rpy2 >=3.3.2
-    - scipy #>=1.2.0
-    - seaborn # >=0.9.0
-    - six
-    - r-base
-    - r-lme4
-    - r-lmerTest
-    - r-emmeans
 
   run:
-    - python # >=3.6
-    - deepdish # >=0.3.6
-    - joblib # >=0.11
-    - matplotlib # >=3.0
-    - numpy # >=1.16.0
-    - pandas #>=0.23.4
-    - patsy # >=0.4.1
-    - rpy2 >=3.3.2
-    - scipy # >=1.2.0
-    - seaborn # >=0.9.0
+    - python >=3.7
+    - deepdish >=0.3.6
+    - joblib >=0.11
+    - matplotlib >=3.0
+    - numpy >=1.16.0
+    - pandas >=1.0
+    - patsy >=0.4.1
+    - rpy2 >=3.3.2 # >=3.1.0  from requirements
+    - scipy >=1.2.0
+    - seaborn >=0.9.0
     - six
     - r-base
     - r-lme4
@@ -60,20 +38,20 @@ requirements:
 
 test:
   imports:
-    - pymer4
-    - pymer4.models
+   - pymer4
+   - pymer4.models
   requires:
-    - pytest
+   - pytest
 
 about:
   home: "http://eshinjolly.com/pymer4/"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: "pymer4: all the convenience of lme4 in python"
-  doc_url: 
-  dev_url: 
+  doc_url:
+  dev_url:
 
-extra:
-  recipe-maintainers:
-    - your-github-id-here
+# extra:
+#   recipe-maintainers:
+#     - your-github-id-here

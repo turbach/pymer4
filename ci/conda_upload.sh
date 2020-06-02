@@ -17,7 +17,7 @@ if [[ -z ${CONDA_DEFAULT_ENV} ]]; then
     exit -1
 fi
 
-# intended for TravisCI deploy but can be tricked into running locally
+# intended for TravisCI deploy but can be tricked into running locally by setting these
 if [[ "$TRAVIS" != "true" || -z "$TRAVIS_BRANCH" || -z "${PACKAGE_NAME}" ]]; then
     echo "conda_upload.sh is meant to run on TravisCI"
     exit -2
@@ -63,11 +63,11 @@ else
 fi
 
 
-# build for multiple platforms ... who knows it might work
+# build for 64-bit linux, mac, windows
 mkdir -p ${bld_prefix}/conda-convert/linux-64
 cp ${tarball} ${bld_prefix}/conda-convert/linux-64
 cd ${bld_prefix}/conda-convert
-conda convert -p linux-64 -p osx-64 linux-64/${PACKAGE_NAME}*tar.bz2
+conda convert -p linux-64 -p osx-64 -p win-64 linux-64/${PACKAGE_NAME}*tar.bz2
 
 # POSIX trick sets $ANACONDA_TOKEN if unset or empty string 
 ANACONDA_TOKEN=${ANACONDA_TOKEN:-[not_set]}

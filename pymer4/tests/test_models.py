@@ -1,4 +1,5 @@
 from __future__ import division
+from multiprocessing import get_context
 from pymer4.models import Lmer, Lm, Lm2
 from pymer4.utils import get_resource_path
 import pandas as pd
@@ -289,24 +290,26 @@ def test_glmer_opt_passing():
 
 
 # all or prune to suit
-# tests_ = [eval(v) for v in locals() if re.match(r"^test_",  str(v))]
-tests_ = [
-    (test_gaussian_lm2),
-    (test_gaussian_lm),
-    (test_gaussian_lmm),
-    (test_post_hoc),
-    (test_logistic_lmm),
-    (test_anova),
-    (test_poisson_lmm),
-    (test_gamma_lmm),
-    (test_inverse_gaussian_lmm),
-    (test_lmer_opt_passing),
-    (test_glmer_opt_passing),
-]
-@pytest.mark.parametrize("model", tests_)
-def test_Pool(model):
-    from multiprocessing import Pool
+# tests_ = [
+#     test_gaussian_lm2,
+#     test_gaussian_lm,
+#     test_gaussian_lmm,
+#     test_post_hoc,
+#     test_logistic_lmm,
+#     test_anova,
+#     test_poisson_lmm,
+#     test_gamma_lmm,
+#     test_inverse_gaussian_lmm,
+#     test_lmer_opt_passing,
+#     test_glmer_opt_passing,
+# ]
+
+# @pytest.mark.parametrize("model", tests_)
+tests_ = [eval(v) for v in locals() if re.match(r"^test_",  str(v))]
+def test_Pool():
     # squeeze model functions through Pool pickling
-    print("Pool", model.__name__)
-    with Pool(1) as pool:
-        _ = pool.apply(model, [])
+    with get_context("spawn").Pool(processes=2) as pool:
+        for test in tests_:
+            print("Pool", test.__name__)
+            pool.apply(test, [])
+    pool.join()

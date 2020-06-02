@@ -1,78 +1,58 @@
-# requires a current GIT_TOKEN on TravisCI 
+# requires a current GIT_TOKEN on TravisCI to build docs
 env:
-     - PACKAGE_NAME: pymer4   # for the conda_upload.sh deploy script
+  - PACKAGE_NAME: pymer4   # for the conda_upload.sh deploy script
+
 language: minimal
+
 before_install:
-    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - source $HOME/miniconda/etc/profile.d/conda.sh && conda activate
-    - hash -r
-    - conda config --set always_yes yes --set changeps1 no
-    - conda info -a
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - source $HOME/miniconda/etc/profile.d/conda.sh && conda activate
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda info -a
+
 install:
-    - pip install deepdish>=0.3.6
-    - conda install -q conda-build conda-verify
-    - conda build conda 
-    - conda build conda -c main -c r -c conda-forge
-    - conda create --name pymer4_env pymer4 -c local -c main -c r -c conda-forge
-    - conda activate pymer4_env  # so tests run in env as installed by conda
-    - conda install black pytest-cov
-    - conda list
-    - lscpu
-    - python -c 'import numpy; numpy.show_config()'
+  - conda install -q conda-build conda-verify
+  - conda build conda -c turbach -c defaults -c conda-forge
+  - conda create --name pymer4_env pymer4 -c local -c turbach -c defaults -c conda-forge
+  - conda activate pymer4_env  # run pytests in conda env
+  - conda install black pytest-cov
+  - conda list
+  - lscpu
+  - python -c 'import numpy; numpy.show_config()'
+
 script:
-#    - black --check --verbose --line-length=79 .
-    - pytest --cov=pymer4
+  # - black -S --check --verbose --line-length=79 .
+  - pytest -x --cov=pymer4
+
 after_success:
-    - pip install codecov && codecov
-# deploy:
-#     # upload github vN.N.N releases to Anaconda Cloud with TravisCI
-#     - provider: script
-#       skip_cleanup: true
-#       script: bash ./ci/conda_upload.sh
-#        on:
-#           # safe to use all branches for testing b.c. conda uploads can be deleted
-#           # all_branches: true  # for testing
-#           tags: true
-#           condition: $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$  # restrict to release tags
+  - conda install codecov && codecov
 
-#     - provider: pypi
-#       skip_cleanup: true
-#       user: "__token__"
-#       password: $PYPI_TOKEN
-#       on:
-#           # all_branches: true  # for testing
-#           tags: true
-#           condition: $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ 
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN   # get from github, set in TravisCI settings
+    on:
+      # any pulls to master will refresh docs
+      branch: master
+      # all_branches: true   # for testing only
 
-#     # homegrown replacement for pages provider
-#     - provider: script
-#       skip_cleanup: true
-#       script: bash ./ci/ghpages_upload.sh
-#       on:
-#           # branch: master
-#           all_branches: true   # testing only
-#           # tags: true
-#           # condition: $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$  # restrict to release tags
+  # upload github vN.N.N releases to main, others to pre-release or dry run
+  - provider: script
+    skip_cleanup: true
+    script: bash ./ci/conda_upload.sh
+    on:
+      # safe to use all branches for testing b.c. conda uploads can be deleted
+      all_branches: true  # for testing
+      # tags: true
+      # condition: $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$  # release tags only
 
-
-# # requires a current GIT_TOKEN on TravisCI 
-# language: python
-# python: "3.7"
-# before_install:
-#   - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-#   - bash miniconda.sh -b -p $HOME/miniconda
-#   - 
-#   - export PATH="$HOME/miniconda/bin:$PATH"
-#   - hash -r
-#   - conda config --set always_yes yes --set changeps1 no
-# install:
-# - conda create -n testenv python=3.7 pip pytest
-# - source activate testenv
-# - conda install -c conda-forge r-base=3.6.1 r-lme4=1.1_21 r-lmertest=3.1_0 r-emmeans=1.3.5.1 rpy2=3.1.0 "cffi<1.13"
-# - pip install -r requirements.txt
-# - python setup.py install
-# - conda list
-# script:
-
-
+#  # do not test on PyPI, version numbers are burned on first upload
+#  - provider: pypi
+#    skip_cleanup: true
+#    user: "__token__"
+#    password: $PYPI_TOKEN
+#    on:
+#      tags: true
+#      condition: $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$
