@@ -1,5 +1,4 @@
 from __future__ import division
-from multiprocessing import get_context
 from pymer4.models import Lmer, Lm, Lm2
 from pymer4.utils import get_resource_path
 import pandas as pd
@@ -9,6 +8,8 @@ from scipy.stats import ttest_ind
 import os
 import pytest
 import re
+import logging
+from multiprocessing import get_context
 
 np.random.seed(10)
 
@@ -303,13 +304,12 @@ def test_glmer_opt_passing():
 #     test_lmer_opt_passing,
 #     test_glmer_opt_passing,
 # ]
-
-# @pytest.mark.parametrize("model", tests_)
 tests_ = [eval(v) for v in locals() if re.match(r"^test_",  str(v))]
-def test_Pool():
+
+
+@pytest.mark.parametrize("test", tests_)
+def test_Pool(test, caplog):
     # squeeze model functions through Pool pickling
     with get_context("spawn").Pool(processes=2) as pool:
-        for test in tests_:
-            print("Pool", test.__name__)
-            pool.apply(test, [])
-    pool.join()
+        pool.apply(test, [])
+    pool.join()  # for codecov
