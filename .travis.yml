@@ -28,8 +28,7 @@ install:
   - python -c 'import numpy; numpy.show_config()'
 
 script:
-  # TODO: enforce black?
-  # - black --check --verbose --line-length=79 .
+  - black .
   - pytest --cov=pymer4
 
 after_success:
@@ -38,8 +37,7 @@ after_success:
 before_deploy:
   # install necessary packages and refresh the docs before deployment
   - conda install sphinx sphinx_bootstrap_theme sphinx-gallery -c conda-forge
-  # FIXME:
-  # - (cd docs && make clean && make html)
+  - (cd docs && make clean && make html)
   #   generating gallery for auto_examples... [100%] example_05_misc_stats.py
   #   Extension error:
   #   Handler <function generate_gallery_rst at 0x7f4d849a5320> for event 'builder-inited' threw an exception
