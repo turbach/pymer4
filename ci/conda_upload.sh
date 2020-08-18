@@ -56,7 +56,7 @@ mmp=$(echo $version | sed -n "s/\(\([0-9]\+\.\)\{1,2\}[0-9]\+\).*/\1/p")
 # TRAVIS_BRANCH is master or a tagged vM.N.P release, in which case,
 # set the destination label appropriately.
 label="dry-run"  
-if [[ "${version}" = "$mmp" ]]; then
+if [[ "${version}" =~ ^${mmp}(.dev[0-9]+){0,1}$ ]]; then
 
     # commit to master uploads to pre-release
     if [[ $TRAVIS_BRANCH = "master" ]]; then
