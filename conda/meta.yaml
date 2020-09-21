@@ -19,11 +19,11 @@ requirements:
 
   host:
     # else test section fails during TravisCI conda build
-    - python {{ python }}
+    - python >=3.6
     - pip
 
   run:
-    - python {{ python }}
+    - python >=3.6
     - deepdish >=0.3.6
     - joblib >=0.14
     - matplotlib >=3.0
