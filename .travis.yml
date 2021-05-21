@@ -13,6 +13,8 @@ jobs:
       env: PYV=3.7
     - name: "3.8 build"
       env: PYV=3.8
+    - name: "3.9 build"
+      env: PYV=3.9
     - name: "default python build"
       env: PYV=""
 
